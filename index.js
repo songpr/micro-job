@@ -1,26 +1,40 @@
 'use strict'
 
 class MicroJob {
-  constructor (jobHandler, msToRun) {
+  /**
+   *
+   * @param {function} jobHandler - function to handle a batch of data for this job
+   * @param {Number} msToRun - millisecond to run a batch of data using the handler
+   */
+  constructor(jobHandler, msToRun) {
     if (typeof (jobHandler) !== 'function') throw Error('job handler is not a function.')
     if (!Number.isInteger(msToRun) || msToRun < 1) throw Error('invalid milliseconds to run job ')
     const _jobHandler = jobHandler
-    Object.defineProperty(this, 'handler', { value: _jobHandler, writable: false })
-    Object.defineProperty(this, 'msToRun', { value: msToRun, writable: false })
-    const jobId = null
-    Object.defineProperty(this, 'isABatchScheduled', { get: () => jobId != null, writable: false })
-    let data = []
+    const _msToRun = msToRun
+    let timeout = null
+    let dataItems = []
     const runAbatch = () => {
-      if (data.length > 0) {
-        const currentData = data
-        data = []
-        _jobHandler(currentData)
+      const currentDataItems = dataItems
+      dataItems = []
+      // const currenttimeout = timeout
+      timeout = null
+      if (currentDataItems.length > 1) _jobHandler(currentDataItems)
+    }
+
+    const addData = (data) => {
+      if (data === undefined) throw Error('can not add undefined as data')
+      dataItems.push(data)
+      // the first data added/or first data after a batch is processed - which is created new dataItems
+      if (timeout === null) {
+        // no batch is scheduled yet, schedule it
+        timeout = setTimeout(runAbatch, _msToRun)
       }
     }
-    Object.defineProperty(this, 'runAbatch', { value: runAbatch, writable: false })
-  }
 
-  addData (data) {
+    Object.defineProperty(this, 'addData', {
+      writable: false,
+      value: addData
+    })
   }
 }
 
