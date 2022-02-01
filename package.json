@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "lint": "standard",
+    "format": "standard --fix",
     "test": "tap \"test/**/*.test.js\""
   },
   "repository": {
@@ -24,9 +25,6 @@
     "url": "https://github.com/songpr/micro-job/issues"
   },
   "homepage": "https://github.com/songpr/micro-job#readme",
-  "dependencies": {
-    "ms": "^2.1.3"
-  },
   "devDependencies": {
     "standard": "^16.0.4",
     "tap": "^15.1.6"
