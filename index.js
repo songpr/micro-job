@@ -14,7 +14,7 @@ class MicroJob {
     let timeout = null
     let dataItems = []
     let error = null
-    Object.defineProperty(this, 'lastError', {
+    Object.defineProperty(this, 'lastBatchFailInfo', {
       get: () => error
     })
     Object.defineProperty(this, 'isABatchScheduled', {
@@ -26,34 +26,30 @@ class MicroJob {
           dataItems = []
           const currenttimeout = timeout
           timeout = null
-          if (currentDataItems.length > 1) {
-            _jobHandler(currentDataItems).then(() => {
-              error = null
-            }).catch(err => {
-              error = Object.freeze({ error: err, data: currentDataItems, timeout: currenttimeout })
-            })
-          }
+          _jobHandler(currentDataItems).then(() => {
+            error = null
+          }).catch(err => {
+            error = Object.freeze({ error: err, data: currentDataItems, timeout: currenttimeout })
+          })
         }
       : () => {
           const currentDataItems = dataItems
           dataItems = []
           const currenttimeout = timeout
           timeout = null
-          if (currentDataItems.length > 1) {
-            try {
-              _jobHandler(currentDataItems)
-              error = null
-            } catch (err) {
-              error = Object.freeze({ error: err, data: currentDataItems, timeout: currenttimeout })
-            }
+          try {
+            _jobHandler(currentDataItems)
+            error = null
+          } catch (err) {
+            error = Object.freeze({ error: err, data: currentDataItems, timeout: currenttimeout })
           }
         }
 
     const addData = (data) => {
       if (data === undefined) throw Error('can not add undefined as data')
       dataItems.push(data)
-      // the first data added/or first data after a batch is processed - which is created new dataItems
-      if (timeout === null) {
+      // there is data but no schedule batchjob
+      if (timeout === null && dataItems.length > 0) {
         // no batch is scheduled yet, schedule it
         timeout = setTimeout(runAbatch, _msToRun)
       }
