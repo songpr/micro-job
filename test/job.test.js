@@ -114,9 +114,9 @@ test('run long time job', async t => {
     result = await setTimeoutAsync(2, items.reduce((total, num) => num ? total + num : total, 0))
   }
   const itemsSumJob = new MJob(itemsSum, 10)
-  for (round = 0; round < 100; round++) {
+  for (let round = 0; round < 100; round++) {
     let roundSum = 0
-    for (i = round; i < (round + 10); i++) {
+    for (let i = round; i < (round + 10); i++) {
       itemsSumJob.addData(i)
       roundSum += i
     }
