@@ -1,6 +1,6 @@
 {
   "name": "m-job",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Micro job to run after specific time interval, prefer sub second e.g. 199 ms, repeatly when there are data to process.",
   "main": "index.js",
   "scripts": {
@@ -27,6 +27,6 @@
   "homepage": "https://github.com/songpr/micro-job#readme",
   "devDependencies": {
     "standard": "^16.0.4",
-    "tap": "^15.1.6"
+    "tap": "^16.0.0"
   }
 }
